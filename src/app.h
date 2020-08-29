@@ -25,6 +25,9 @@ enum class ColorScheme {
 };
 
 CellularAutomataMap load_cellular_automata();
+std::vector<std::array<uint8_t, 3>> get_color_subset(
+        const std::vector<std::array<uint8_t, 3>>& colors, int states
+);
 std::array<std::vector<std::array<uint8_t, 3>>, COLORSCHEMES_MAX>
 load_colorschemes();
 
@@ -49,9 +52,9 @@ class App {
         // color scheme
         std::array<const char*, COLORSCHEMES_MAX> color_scheme_names
             {"Greyscale", "Red Gradient"};
-        std::array<std::vector<std::array<uint8_t, 3>>, 2>
-            color_schemes;
+        std::array<ColorPalette, COLORSCHEMES_MAX> color_schemes;
         ColorScheme current_color_scheme = ColorScheme::Greyscale;
+        ColorPalette colors;
 
         CellularAutomataMap cellular_automata;
         CellularAutomata* current_cellular_automata;
@@ -60,6 +63,7 @@ class App {
         // functions
         void randomize_board();
         void clear_board();
+        void update_colors();
 
     public:
         // members

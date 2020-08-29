@@ -4,6 +4,7 @@ using std::endl;
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <cmath>
 
 #include "app.h"
 #include "../imgui/imgui.h"
@@ -13,25 +14,27 @@ using std::endl;
 
 // public methods
 App::App(SDL_Renderer* r): renderer(r) {
-    randomize_board();
     cellular_automata = load_cellular_automata();
     color_schemes = load_colorschemes();
 
     current_cellular_automata_family = "Life";
     current_cellular_automata =
         cellular_automata[current_cellular_automata_family][0];
+
+    update_colors();
+    randomize_board();
 }
 
 void App::render(const ImGuiIO& io) {
-    // render main drawing
     auto scheme = color_schemes[static_cast<int>(current_color_scheme)];
     int current_color_scheme_i = static_cast<int>(current_color_scheme);
 
+    // render main drawing
     SDL_SetRenderDrawColor(
         renderer,
-        scheme[0][0],
-        scheme[0][1],
-        scheme[0][2],
+        colors[0][0],
+        colors[0][1],
+        colors[0][2],
         255
     );
     SDL_RenderClear(renderer);
@@ -47,9 +50,9 @@ void App::render(const ImGuiIO& io) {
             uint8_t val = board[row][col];
             SDL_SetRenderDrawColor(
                 renderer,
-                scheme[val][0],
-                scheme[val][1],
-                scheme[val][2],
+                colors[val][0],
+                colors[val][1],
+                colors[val][2],
                 255
             );
 
@@ -62,9 +65,8 @@ void App::render(const ImGuiIO& io) {
         }
     }
 
-    // draw grid
     SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
-    // draw vertical lines
+    // draw vertical grid lines
     for (int col = 1; col < BOARD_COLS; col++) {
         SDL_RenderDrawLine(renderer,
             col * cell_width, 0,
@@ -72,7 +74,7 @@ void App::render(const ImGuiIO& io) {
         );
     }
 
-    // draw horizontal lines
+    // draw horizontal grid lines
     for (int row = 1; row < BOARD_ROWS; row++) {
         SDL_RenderDrawLine(renderer,
             0, row * cell_height,
@@ -87,14 +89,15 @@ void App::render(const ImGuiIO& io) {
 
     // paintbrush window
     ImGui::Begin("Paintbrush");
-    for (int i = 0; i < scheme.size(); i++) {
+    for (int i = 0; i < current_cellular_automata->num_states; i++) {
         ImGui::PushID(i);
 
-        if (ImGui::ColorButton(
-                "",
-                ImVec4(scheme[i][0], scheme[i][1], scheme[i][2], 255))
-        ) {
-            std::cout << "selected_state was: " << i << std::endl;
+        if (ImGui::ColorButton("", ImVec4(
+                colors[i][0]/255.0,
+                colors[i][1]/255.0,
+                colors[i][2]/255.0,
+                255
+        ))) {
             selected_state = i;
         }
 
@@ -141,6 +144,7 @@ void App::render(const ImGuiIO& io) {
 
         if (selected != -1) {
             current_color_scheme = static_cast<ColorScheme>(selected);
+            update_colors();
         }
 
         ImGui::EndCombo();
@@ -166,16 +170,49 @@ void App::render(const ImGuiIO& io) {
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo("Automata Family", "Life")) {
+    if (ImGui::BeginCombo(
+            "Automata Family",
+            current_cellular_automata_family.c_str())
+    ) {
+        int i = 0;
+        for (auto& family : cellular_automata) {
+            ImGui::PushID(i);
 
-        ImGui::Selectable("Life", true);
+            const char* name = family.first.c_str();
+            if (ImGui::Selectable(
+                    name, name == current_cellular_automata_family)
+            ) {
+                current_cellular_automata_family = name;
+                current_cellular_automata = cellular_automata[name][0];
+                clear_board();
+                update_colors();
+            }
+            ImGui::PopID();
+            i++;
+        }
 
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo("Automata Type", "Conway's Life")) {
+    if (ImGui::BeginCombo(
+            "Automata Type",
+            cellular_automata[current_cellular_automata_family][0]->name.c_str())
+    ) {
 
-        ImGui::Selectable("Conway's Life", true);
+        int i = 0;
+        for (auto& automata :
+                   cellular_automata[current_cellular_automata_family]
+        ) {
+            if (ImGui::Selectable(
+                    automata->name.c_str(),
+                    automata == current_cellular_automata)) {
+                clear_board();
+                current_cellular_automata = automata;
+                update_colors();
+            }
+
+            i++;
+        }
 
         ImGui::EndCombo();
     }
@@ -225,7 +262,8 @@ void App::advance_one_generation() {
 
 // private methods
 void App::randomize_board() {
-    std::uniform_int_distribution<uint8_t> distribution(0, 1);
+    std::uniform_int_distribution<uint8_t> distribution(
+        0, current_cellular_automata->num_states-1);
     for (int row = 0; row < BOARD_ROWS; row++) {
         for (int col = 0; col < BOARD_COLS; col++) {
             board[row][col] = distribution(random_generator);
@@ -239,11 +277,62 @@ void App::clear_board() {
     }
 }
 
-std::array<std::vector<std::array<uint8_t, 3>>, COLORSCHEMES_MAX>
+void App::update_colors() {
+    colors = get_color_subset(
+        color_schemes[static_cast<int>(current_color_scheme)],
+        current_cellular_automata->num_states
+    );
+}
+
+// functions
+ColorPalette get_color_subset(
+        const ColorPalette& colors, int states
+) {
+    auto _colors = colors;
+    while (_colors.size() < states) {
+        _colors.insert(_colors.end(), colors.begin(), colors.end());
+    }
+
+    std::vector<std::array<uint8_t, 3>> color_subset;
+    color_subset.push_back(_colors[0]);
+
+    int next_color_index = 1;
+    for (int i = 1; i < states; i++) {
+        color_subset.push_back(_colors[next_color_index]);
+        next_color_index = floor((_colors.size()-1)/states);
+    }
+
+    return color_subset;
+}
+
+std::array<ColorPalette, COLORSCHEMES_MAX>
 load_colorschemes() {
     return {{
-        { {255, 255, 255}, {0, 0, 0}},
-        { {0, 0, 0}, {255, 0, 0} }
+        {{0xff, 0xff, 0xff}, {0x00, 0x00, 0x00}, {0x08, 0x08, 0x08},
+         {0x0f, 0x0f, 0x0f}, {0x17, 0x17, 0x17}, {0x1f, 0x1f, 0x1f},
+         {0x27, 0x27, 0x27}, {0x2e, 0x2e, 0x2e}, {0x36, 0x36, 0x36},
+         {0x3e, 0x3e, 0x3e}, {0x46, 0x46, 0x46}, {0x4d, 0x4d, 0x4d},
+         {0x55, 0x55, 0x55}, {0x5d, 0x5d, 0x5d}, {0x64, 0x64, 0x64},
+         {0x6c, 0x6c, 0x6c}, {0x74, 0x74, 0x74}, {0x7c, 0x7c, 0x7c},
+         {0x83, 0x83, 0x83}, {0x8b, 0x8b, 0x8b}, {0x93, 0x93, 0x93},
+         {0x9b, 0x9b, 0x9b}, {0xa2, 0xa2, 0xa2}, {0xaa, 0xaa, 0xaa},
+         {0xb2, 0xb2, 0xb2}, {0xb9, 0xb9, 0xb9}, {0xc1, 0xc1, 0xc1},
+         {0xc9, 0xc9, 0xc9}, {0xd1, 0xd1, 0xd1}, {0xd8, 0xd8, 0xd8},
+         {0xe0, 0xe0, 0xe0}, {0xe8, 0xe8, 0xe8}, {0xf0, 0xf0, 0xf0},
+         {0xf7, 0xf7, 0xf7}
+        },
+        {{0x00, 0x00, 0x00}, {0xE5, 0x00, 0x35}, {0xE3, 0x00, 0x50},
+         {0xE2, 0x00, 0x6B}, {0xE1, 0x00, 0x85}, {0xE0, 0x00, 0xA0},
+         {0xDE, 0x00, 0xBA}, {0xDD, 0x00, 0xD4}, {0xCB, 0x00, 0xDC},
+         {0xAF, 0x00, 0xDB}, {0x94, 0x00, 0xD9}, {0x78, 0x00, 0xD8},
+         {0x5E, 0x00, 0xD7}, {0x43, 0x00, 0xD6}, {0x29, 0x00, 0xD5},
+         {0x0F, 0x00, 0xD3}, {0x00, 0x09, 0xD2}, {0x00, 0x23, 0xD1},
+         {0x00, 0x3C, 0xD0}, {0x00, 0x54, 0xCE}, {0x00, 0x6D, 0xCD},
+         {0x00, 0x85, 0xCC}, {0x00, 0x9D, 0xCB}, {0x00, 0xB4, 0xCA},
+         {0x00, 0xC8, 0xC5}, {0x00, 0xC7, 0xAC}, {0x00, 0xC6, 0x93},
+         {0x00, 0xC5, 0x7A}, {0x00, 0xC3, 0x61}, {0x00, 0xC2, 0x49},
+         {0x00, 0xC1, 0x31}, {0x00, 0xC0, 0x1A}, {0x00, 0xBF, 0x03}
+        }
     }};
 }
 
@@ -252,7 +341,12 @@ CellularAutomataMap load_cellular_automata() {
         {
             "Life", {
                 new Life("Conway's Life", "23/3")
-            }
+            },
+        },
+        {
+            "Generations", {
+                new Generations("Brian's Brain", "/2/3")
+            },
         }
     };
 }

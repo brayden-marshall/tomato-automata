@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <array>
-#include <unordered_map>
+#include <map>
 #include <algorithm>
 #include <cstdint>
 
@@ -16,9 +16,10 @@ class CellularAutomata;
 
 // typedefs
 typedef std::array<std::array<uint8_t, BOARD_COLS>, BOARD_ROWS> Board;
-typedef std::array<uint8_t, 4> Color;
-typedef std::unordered_map<std::string, std::vector<CellularAutomata*>>
+typedef std::array<uint8_t, 3> Color;
+typedef std::map<std::string, std::vector<CellularAutomata*>>
         CellularAutomataMap;
+typedef std::vector<std::array<uint8_t, 3>> ColorPalette;
 
 // functions
 CellularAutomataMap load_cellular_automata();

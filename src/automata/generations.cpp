@@ -54,8 +54,8 @@ Generations::Generations(std::string name, std::string rules)
 }
 
 std::pair<Board, bool> Generations::rewrite(const Board& board) {
-    auto board_copy = board;
     bool change_made = false;
+    Board board_copy = board;
 
     for (int row = 0; row < BOARD_ROWS; row++) {
         for (int col = 0; col < BOARD_COLS; col++) {
@@ -71,7 +71,9 @@ std::pair<Board, bool> Generations::rewrite(const Board& board) {
                     auto neighbour_row = modulo(row + row_offset, BOARD_ROWS);
                     auto neighbour_col = modulo(col + col_offset, BOARD_COLS);
 
-                    neighbour_count += board[neighbour_row][neighbour_col];
+                    if (board[neighbour_row][neighbour_col] == 1) {
+                        neighbour_count++;
+                    }
                 }
             }
 
@@ -83,10 +85,8 @@ std::pair<Board, bool> Generations::rewrite(const Board& board) {
             } else if (board[row][col] != 1 ||
                        !contains(survive_numbers, neighbour_count)
             ) {
-                if (neighbour_count < 2 || neighbour_count > 3) {
-                    board_copy[row][col] = (board[row][col] + 1) % num_states;
-                    change_made = true;
-                }
+                board_copy[row][col] = (board[row][col] + 1) % num_states;
+                change_made = true;
             }
         }
     }
