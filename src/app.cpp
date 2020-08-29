@@ -8,16 +8,32 @@ using std::endl;
 #include "app.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_sdl.h"
+#include "./common.h"
+#include "./automata/automata.h"
 
-// public functions
+// public methods
 App::App(SDL_Renderer* r): renderer(r) {
     randomize_board();
-    //board[0][0] = 1;
+    cellular_automata = load_cellular_automata();
+    color_schemes = load_colorschemes();
+
+    current_cellular_automata_family = "Life";
+    current_cellular_automata =
+        cellular_automata[current_cellular_automata_family][0];
 }
 
 void App::render(const ImGuiIO& io) {
     // render main drawing
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    auto scheme = color_schemes[static_cast<int>(current_color_scheme)];
+    int current_color_scheme_i = static_cast<int>(current_color_scheme);
+
+    SDL_SetRenderDrawColor(
+        renderer,
+        scheme[0][0],
+        scheme[0][1],
+        scheme[0][2],
+        255
+    );
     SDL_RenderClear(renderer);
 
     auto display_width = io.DisplaySize.x;
@@ -26,17 +42,23 @@ void App::render(const ImGuiIO& io) {
     auto cell_height = display_height / BOARD_ROWS;
 
     // fill in squares
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int row = 0; row < BOARD_ROWS; row++) {
         for (int col = 0; col < BOARD_COLS; col++) {
-            if (board[row][col] != 0) {
-                SDL_Rect rect;
-                rect.x = col * cell_width;
-                rect.y = row * cell_height;
-                rect.w = cell_width;
-                rect.h = cell_height;
-                SDL_RenderFillRect(renderer, &rect);
-            }
+            uint8_t val = board[row][col];
+            SDL_SetRenderDrawColor(
+                renderer,
+                scheme[val][0],
+                scheme[val][1],
+                scheme[val][2],
+                255
+            );
+
+            SDL_Rect rect;
+            rect.x = col * cell_width;
+            rect.y = row * cell_height;
+            rect.w = cell_width;
+            rect.h = cell_height;
+            SDL_RenderFillRect(renderer, &rect);
         }
     }
 
@@ -58,35 +80,107 @@ void App::render(const ImGuiIO& io) {
         );
     }
 
-
     // render ImGui
     ImGui::NewFrame();
 
-
     int old_selected_state = selected_state;
 
+    // paintbrush window
     ImGui::Begin("Paintbrush");
-    ImGui::SliderInt("Brush Size", &brush_size, 1, 10);
-    ImGui::Separator();
+    for (int i = 0; i < scheme.size(); i++) {
+        ImGui::PushID(i);
 
-    if (ImGui::ColorButton("White", ImVec4(255, 255, 255, 255))) {
-        selected_state = 0;
+        if (ImGui::ColorButton(
+                "",
+                ImVec4(scheme[i][0], scheme[i][1], scheme[i][2], 255))
+        ) {
+            std::cout << "selected_state was: " << i << std::endl;
+            selected_state = i;
+        }
+
+        if (old_selected_state == i) {
+            ImGui::SameLine();
+            ImGui::Text("Active");
+        }
+
+        ImGui::PopID();
     }
 
-    if (old_selected_state == 0) {
-        ImGui::SameLine();
-        ImGui::Text("Active");
+    // end paintbrush window
+    ImGui::End();
+
+    // controls window
+    bool question = false;
+    ImGui::Begin("Controls", &question, ImGuiWindowFlags_AlwaysAutoResize);
+
+    if (ImGui::Button("Clear")) {
+        clear_board();
     }
 
-    if (ImGui::ColorButton("Black", ImVec4(0, 0, 0, 255))) {
-        selected_state = 1;
+    if (ImGui::Button("Randomize")) {
+        randomize_board();
     }
 
-    if (old_selected_state == 1) {
-        ImGui::SameLine();
-        ImGui::Text("Active");
+    if (ImGui::Button("Advance Once")) {
+        advance_one_generation();
     }
 
+    if (ImGui::BeginCombo(
+            "Color Scheme",
+            color_scheme_names[current_color_scheme_i]
+    )) {
+        int selected = -1;
+
+        for (int i = 0; i < COLORSCHEMES_MAX; i++) {
+            if (ImGui::Selectable(
+                    color_scheme_names[i], current_color_scheme_i == i)
+            ) {
+                selected = i;
+            }
+        }
+
+        if (selected != -1) {
+            current_color_scheme = static_cast<ColorScheme>(selected);
+        }
+
+        ImGui::EndCombo();
+    }
+
+    int animation_speed_i = static_cast<int>(animation_speed);
+    if (ImGui::BeginCombo(
+            "Animation Speed",
+            animation_speed_names[animation_speed_i]
+    )) {
+        int selected = -1;
+
+        for (int i = 0; i < ANIMATION_SPEEDS_MAX; i++) {
+            if (ImGui::Selectable(animation_speed_names[i], animation_speed_i == i)) {
+                selected = i;
+            }
+        }
+
+        if (selected != -1) {
+            animation_speed = static_cast<AnimationSpeed>(selected);
+        }
+
+        ImGui::EndCombo();
+    }
+
+    if (ImGui::BeginCombo("Automata Family", "Life")) {
+
+        ImGui::Selectable("Life", true);
+
+        ImGui::EndCombo();
+    }
+
+    if (ImGui::BeginCombo("Automata Type", "Conway's Life")) {
+
+        ImGui::Selectable("Conway's Life", true);
+
+        ImGui::EndCombo();
+    }
+
+    // end controls window
     ImGui::End();
 
     ImGui::Render();
@@ -99,15 +193,14 @@ void App::render(const ImGuiIO& io) {
 void App::update(const ImGuiIO& io, int dt) {
     if (!paused) {
         timer += dt;
-        //cout << "timer is: " << timer << endl;
-        if (timer >= delay) {
+        if (timer >= animation_speed_delays[static_cast<int>(animation_speed)]) {
             timer = 0;
             advance_one_generation();
         }
     }
 
-    // if left mouse was pressed
-    if (io.MouseDown[0]) {
+    // if mouse was pressed
+    if (io.MouseDown[0] || io.MouseDown[1]) {
         // get the row/col from mouse position
         double cell_width = io.DisplaySize.x / BOARD_COLS;
         double cell_height = io.DisplaySize.y / BOARD_ROWS;
@@ -115,51 +208,22 @@ void App::update(const ImGuiIO& io, int dt) {
         int clicked_col = io.MousePos.x / cell_width;
         int clicked_row = io.MousePos.y / cell_height;
 
-        board[clicked_row][clicked_col] = selected_state;
+        board[clicked_row][clicked_col] =
+            io.MouseDown[0] ? selected_state : 0;
     }
-}
-
-inline int modulo(int a, int b) {
-    return ((a % b) + b) % b;
 }
 
 void App::advance_one_generation() {
-    auto board_copy = board;
+    auto result = current_cellular_automata->rewrite(board);
+    board = result.first;
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
-
-            // count neighbours
-            uint8_t neighbour_count = 0;
-            for (int row_offset = -1; row_offset <= 1; row_offset++) {
-                for (int col_offset = -1; col_offset <= 1; col_offset++) {
-                    if (row_offset == 0 && col_offset == 0) {
-                        continue;
-                    }
-
-                    auto neighbour_row = modulo(row + row_offset, BOARD_ROWS);
-                    auto neighbour_col = modulo(col + col_offset, BOARD_COLS);
-
-                    neighbour_count += board[neighbour_row][neighbour_col];
-                }
-            }
-
-            if (board[row][col] == 0) {
-                if (neighbour_count == 3) {
-                    board_copy[row][col] = 1;
-                }
-            } else {
-                if (neighbour_count < 2 || neighbour_count > 3) {
-                    board_copy[row][col] = 0;
-                }
-            }
-        }
+    bool change_made = result.second;
+    if (!change_made) {
+        paused = true;
     }
-
-    board = board_copy;
 }
 
-// private functions
+// private methods
 void App::randomize_board() {
     std::uniform_int_distribution<uint8_t> distribution(0, 1);
     for (int row = 0; row < BOARD_ROWS; row++) {
@@ -167,4 +231,28 @@ void App::randomize_board() {
             board[row][col] = distribution(random_generator);
         }
     }
+}
+
+void App::clear_board() {
+    for (int row = 0; row < BOARD_ROWS; row++) {
+        board[row].fill(0);
+    }
+}
+
+std::array<std::vector<std::array<uint8_t, 3>>, COLORSCHEMES_MAX>
+load_colorschemes() {
+    return {{
+        { {255, 255, 255}, {0, 0, 0}},
+        { {0, 0, 0}, {255, 0, 0} }
+    }};
+}
+
+CellularAutomataMap load_cellular_automata() {
+    return {
+        {
+            "Life", {
+                new Life("Conway's Life", "23/3")
+            }
+        }
+    };
 }

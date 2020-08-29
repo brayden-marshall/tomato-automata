@@ -2,15 +2,22 @@ cmake_minimum_required(VERSION 3.7)
 
 project(tomato-automata)
 
-#aux_source_directory(./src SRC_LIST)
-#add_executable(${PROJECT_NAME} ${SRC_LIST})
-set(SRC_DIR ./src)
+set(SRC ./src)
 set(SRC_LIST
-    ${SRC_DIR}/main.cpp ${SRC_DIR}/app.cpp ${SRC_DIR}/app.h
+    ${SRC}/main.cpp
+    ${SRC}/app.cpp ${SRC}/app.h
+    ${SRC}/common.cpp ${SRC}/common.h
+    ${SRC}/automata/automata.h ${SRC}/automata/life.cpp
+    ${SRC}/automata/generations.cpp
 )
+#aux_source_directory(./src SRC_LIST)
+
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
+
+set(GCC_COMPILER_FLAGS "-ggdb -Wall -Wextra")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)

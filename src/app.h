@@ -3,18 +3,35 @@
 
 #include <SDL2/SDL.h>
 #include <cstdint>
+#include <unordered_map>
 #include <array>
 #include <random>
 
 #include "../imgui/imgui.h"
+#include "./common.h"
 
-#define BOARD_ROWS 100
-#define BOARD_COLS 100
+#define ANIMATION_SPEEDS_MAX 4
+enum class AnimationSpeed {
+    Slow,
+    Medium,
+    Fast,
+    VeryFast,
+};
+
+#define COLORSCHEMES_MAX 2
+enum class ColorScheme {
+    Greyscale,
+    RedGradient,
+};
+
+CellularAutomataMap load_cellular_automata();
+std::array<std::vector<std::array<uint8_t, 3>>, COLORSCHEMES_MAX>
+load_colorschemes();
 
 class App {
     private:
         // members
-        std::array<std::array<uint8_t, BOARD_COLS>, BOARD_ROWS> board = {};
+        Board board{};
         std::default_random_engine random_generator;
         int delay = 100;
         int timer = 0;
@@ -22,8 +39,27 @@ class App {
         uint8_t selected_state = 0;
         int brush_size = 1;
 
+        // animation speed
+        AnimationSpeed animation_speed = AnimationSpeed::Fast;
+        std::array<const char*, ANIMATION_SPEEDS_MAX> animation_speed_names
+            {"Slow", "Medium", "Fast", "Very Fast"};
+        std::array<int, ANIMATION_SPEEDS_MAX> animation_speed_delays
+            {250, 150, 100, 50};
+
+        // color scheme
+        std::array<const char*, COLORSCHEMES_MAX> color_scheme_names
+            {"Greyscale", "Red Gradient"};
+        std::array<std::vector<std::array<uint8_t, 3>>, 2>
+            color_schemes;
+        ColorScheme current_color_scheme = ColorScheme::Greyscale;
+
+        CellularAutomataMap cellular_automata;
+        CellularAutomata* current_cellular_automata;
+        std::string current_cellular_automata_family;
+
         // functions
         void randomize_board();
+        void clear_board();
 
     public:
         // members
