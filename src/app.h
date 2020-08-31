@@ -38,12 +38,14 @@ class App {
         std::default_random_engine random_generator;
         int delay = 100;
         int timer = 0;
+        bool grid_enabled = true;
 
         uint8_t selected_state = 0;
         int brush_size = 1;
 
         // animation speed
         AnimationSpeed animation_speed = AnimationSpeed::Fast;
+
         std::array<const char*, ANIMATION_SPEEDS_MAX> animation_speed_names
             {"Slow", "Medium", "Fast", "Very Fast"};
         std::array<int, ANIMATION_SPEEDS_MAX> animation_speed_delays
@@ -56,6 +58,7 @@ class App {
         ColorScheme current_color_scheme = ColorScheme::Greyscale;
         ColorPalette colors;
 
+        // cellular automata and automata family
         CellularAutomataMap cellular_automata;
         CellularAutomata* current_cellular_automata;
         std::string current_cellular_automata_family;

@@ -61,21 +61,24 @@ std::pair<Board, bool> Generations::rewrite(const Board& board) {
         for (int col = 0; col < BOARD_COLS; col++) {
 
             // count neighbours
-            uint8_t neighbour_count = 0;
-            for (int row_offset = -1; row_offset <= 1; row_offset++) {
-                for (int col_offset = -1; col_offset <= 1; col_offset++) {
-                    if (row_offset == 0 && col_offset == 0) {
-                        continue;
-                    }
+            uint8_t neighbour_count = get_neighbour_count(
+                board, NeighbourhoodType::Moore, row, col
+            );
+            //uint8_t neighbour_count = 0;
+            //for (int row_offset = -1; row_offset <= 1; row_offset++) {
+            //    for (int col_offset = -1; col_offset <= 1; col_offset++) {
+            //        if (row_offset == 0 && col_offset == 0) {
+            //            continue;
+            //        }
 
-                    auto neighbour_row = modulo(row + row_offset, BOARD_ROWS);
-                    auto neighbour_col = modulo(col + col_offset, BOARD_COLS);
+            //        auto neighbour_row = modulo(row + row_offset, BOARD_ROWS);
+            //        auto neighbour_col = modulo(col + col_offset, BOARD_COLS);
 
-                    if (board[neighbour_row][neighbour_col] == 1) {
-                        neighbour_count++;
-                    }
-                }
-            }
+            //        if (board[neighbour_row][neighbour_col] == 1) {
+            //            neighbour_count++;
+            //        }
+            //    }
+            //}
 
             if (board[row][col] == 0) {
                 if (contains(birth_numbers, neighbour_count)) {

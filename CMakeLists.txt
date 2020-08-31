@@ -8,7 +8,9 @@ set(SRC_LIST
     ${SRC}/app.cpp ${SRC}/app.h
     ${SRC}/common.cpp ${SRC}/common.h
     ${SRC}/automata/automata.h ${SRC}/automata/life.cpp
-    ${SRC}/automata/generations.cpp
+    ${SRC}/automata/generations.cpp ${SRC}/automata/cyclic.cpp
+    ${SRC}/automata/larger_than_life.cpp ${SRC}/automata/neumann_binary.cpp
+    ${SRC}/automata/rules_table.cpp ${SRC}/automata/weighted_life.cpp
 )
 #aux_source_directory(./src SRC_LIST)
 
@@ -17,7 +19,7 @@ add_executable(${PROJECT_NAME} ${SRC_LIST})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 
 set(GCC_COMPILER_FLAGS "-ggdb -Wall -Wextra")
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COMPILER_FLAGS}")
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
