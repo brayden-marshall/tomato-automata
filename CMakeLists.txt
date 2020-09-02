@@ -16,7 +16,7 @@ set(SRC_LIST
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 set(GCC_COMPILER_FLAGS "-ggdb -Wall -Wextra")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COMPILER_FLAGS}")

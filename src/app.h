@@ -43,9 +43,6 @@ class App {
         uint8_t selected_state = 0;
         int brush_size = 1;
 
-        // animation speed
-        AnimationSpeed animation_speed = AnimationSpeed::Fast;
-
         std::array<const char*, ANIMATION_SPEEDS_MAX> animation_speed_names
             {"Slow", "Medium", "Fast", "Very Fast"};
         std::array<int, ANIMATION_SPEEDS_MAX> animation_speed_delays
@@ -71,6 +68,7 @@ class App {
     public:
         // members
         SDL_Renderer* renderer;
+        AnimationSpeed animation_speed = AnimationSpeed::Fast;
         bool paused = true;
 
         // constructor

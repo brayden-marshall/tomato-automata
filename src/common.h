@@ -6,6 +6,7 @@
 #include <array>
 #include <map>
 #include <algorithm>
+#include <optional>
 #include <cstdint>
 
 #define BOARD_ROWS 100
@@ -97,7 +98,7 @@ class CellularAutomata {
         std::string name;
         uint8_t num_states;
         std::string rules;
-        Color* color_override = nullptr;
+        std::optional<ColorPalette> color_override;
 
         // methods
         virtual ~CellularAutomata() {}

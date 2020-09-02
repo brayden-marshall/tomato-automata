@@ -14,10 +14,15 @@ using std::endl;
 #define WINDOW_SIZE 900
 
 int main() {
+    // initialize SDL
     SDL_Init(SDL_INIT_EVERYTHING);
-
-    SDL_Window* window = SDL_CreateWindow("Tomato Automata", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_SIZE, WINDOW_SIZE, 0);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Window* window = SDL_CreateWindow(
+        "Tomato Automata", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        WINDOW_SIZE, WINDOW_SIZE, 0
+    );
+    SDL_Renderer* renderer = SDL_CreateRenderer(
+        window, -1, SDL_RENDERER_ACCELERATED
+    );
 
     // enable VSync
     SDL_GL_SetSwapInterval(1);

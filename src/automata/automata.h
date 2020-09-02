@@ -3,6 +3,7 @@
 
 #include "../common.h"
 #include <string>
+#include <optional>
 #include <cstdint>
 
 class Generations: public CellularAutomata {
@@ -85,6 +86,19 @@ public:
 };
 
 class RulesTable: public CellularAutomata {
+protected:
+    NeighbourhoodType neighbourhood_type;
+    bool count_center_cell;
+    bool first_bitplane_is_firing;
+    // accessed using table[<cell state>][<number of neighbours firing>]
+    std::vector<std::vector<int>> table;
+public:
+    virtual std::pair<Board, bool> rewrite(const Board& board) override;
+
+    RulesTable(std::string name, std::string rules);
+    RulesTable(
+        std::string name, std::string rules, ColorPalette color_override
+    );
 };
 
 class WeightedLife: public CellularAutomata {
