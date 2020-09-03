@@ -63,6 +63,7 @@ class App {
         // functions
         void randomize_board();
         void clear_board();
+        void render_gui();
         void update_colors();
 
     public:
@@ -70,6 +71,7 @@ class App {
         SDL_Renderer* renderer;
         AnimationSpeed animation_speed = AnimationSpeed::Fast;
         bool paused = true;
+        bool show_gui = true;
 
         // constructor
         App(SDL_Renderer* r);

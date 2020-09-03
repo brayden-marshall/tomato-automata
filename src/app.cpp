@@ -90,7 +90,15 @@ void App::render(const ImGuiIO& io) {
     //
     // render ImGui
     //
+    
+    if (show_gui) {
+        render_gui();
+    }
 
+    SDL_RenderPresent(renderer);
+}
+
+void App::render_gui() {
     ImGui::NewFrame();
 
     // paintbrush window
@@ -236,8 +244,6 @@ void App::render(const ImGuiIO& io) {
 
     ImGui::Render();
     ImGuiSDL::Render(ImGui::GetDrawData());
-
-    SDL_RenderPresent(renderer);
 }
 
 // dt is the delta time in milliseconds
@@ -572,6 +578,143 @@ CellularAutomataMap load_cellular_automata() {
                     "1,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,0,3,1,1,3,3,3,3,3,3",
                     {{0, 0, 0}, {255, 0, 0}, {0, 0, 255}, {255, 255, 0}}
                 ),
+            }
+        },
+        {
+            "WeightedLife", {
+                new WeightedLife("Ben's Rule", "NW3,NN2,NE3,WW2,ME0,EE2,SW3,SS2,SE3,HI0,RS3,RS5,RS8,RB4,RB6,RB8"),
+
+                new WeightedLife("Bricks", "NW5,NN2,NE5,WW2,ME0,EE2,SW5,SS2,SE5,HI3,RS10,RS12,RS14,RS16,RB7,RB13"),
+
+                new WeightedLife("Border", "NW1,NN1,NE1,WW1,ME9,EE1,SW1,SS1,SE1,HI0,RS10,RS11,RS12,RS13,RS14,RS15,RS16,RB1,RB2,RB3,RB4,RB5,RB6,RB7,RB8"),
+
+                new WeightedLife("Bustle", "NW2,NN1,NE2,WW1,ME0,EE1,SW2,SS1,SE2,HI4,RS2,RS4,RS5,RS7,RB3"),
+
+                new WeightedLife("Career", "NW1,NN2,NE1,WW1,ME0,EE1,SW1,SS1,SE1,HI0,RS2,RS3,RB3"),
+
+                new WeightedLife("Cloud54", "NW1,NN1,NE9,WW1,ME0,EE9,SW1,SS9,SE9,HI0,RS2,RS3,RS9,RS10,RS19,RS27,RB3,RB10,RB27"),
+
+                new WeightedLife("Cloud75", "NW1,NN1,NE9,WW1,ME0,EE9,SW1,SS9,SE9,HI0,RS2,RS3,RS4,RS10,RS11,RS13,RS18,RS21,RS22,RS27,RS29,RS30,RS31,RS36,RS37,RS38,RS39,RS40,RB3,RB10,RB27"),
+
+                new WeightedLife("Conway--", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS3,RS6,RS7,RS10,RS11,RS15,RB3,RB7,RB11,RB15"),
+
+                new WeightedLife("Conway++", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS2,RS3,RS6,RS7,RS10,RS11,RS15,RS20,RB3,RB7,RB11,RB15"),
+
+                new WeightedLife("Conway+-1", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS2,RS3,RS6,RS7,RS10,RS12,RS15,RB3,RB7,RB11,RB15"),
+
+                new WeightedLife("Conway+-2", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS2,RS3,RS7,RS10,RS11,RS12,RS13,RS15,RB3,RB7,RB11,RB15"),
+
+                new WeightedLife("CrossPorpoises", "NW1,NN4,NE1,WW4,ME0,EE4,SW1,SS4,SE0,HI0,RS2,RS3,RS6,RS7,RS8,RS9,RS10,RS12,RS13,RB5"),
+
+                new WeightedLife("Cyclish", "NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI7,RS2,RB1,RB2,RB3"),
+
+                new WeightedLife("Cyclones", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI5,RS2,RS4,RS5,RB2,RB3,RB4,RB5"),
+
+                new WeightedLife("Dragon", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS1,RS2,RS7,RS8,RS12,RS15,RS18,RS20,RB7,RB11,RB12,RB13,RB20"),
+
+                new WeightedLife("Emergence", "NW1,NN8,NE1,WW1,ME0,EE1,SW8,SS8,SE1,HI0,RS2,RS3,RS4,RS10,RS11,RS16,RS17,RS24,RS25,RB3,RB4,RB9,RB24"),
+
+                new WeightedLife("Fire-flies", "NW1,NN5,NE1,WW5,ME10,EE5,SW1,SS5,SE1,HI9,RS1,RS10,RB6,RB11,RB12,RB21"),
+
+                new WeightedLife("Fleas", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS2,RS3,RS6,RS7,RS10,RS11,RS15,RS20,RB2,RB11"),
+
+                new WeightedLife("Fleas2", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS1,RS2,RS5,RS7,RS10,RS11,RB2,RB4,RB8,RB11"),
+
+                new WeightedLife("NoFleas2", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS2,RS3,RS5,RS6,RS7,RS10,RS11,RB2,RB4,RB8,RB11"),
+
+                new WeightedLife("FroggyHex", "NW4,NN1,NE0,WW1,ME0,EE4,SW0,SS4,SE1,HI0,RS1,RS6,RS8,RB5,RB6"),
+
+                new WeightedLife("Frost M", "NW1,NN1,NE1,WW1,ME0,EE1,SW1,SS1,SE1,HI25,RB1"),
+
+                new WeightedLife("Frost N", "NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI25,RB1"),
+
+                new WeightedLife("Gnats", "NW9,NN1,NE9,WW1,ME0,EE1,SW9,SS1,SE9,HI0,RS0,RS1,RS2,RS11,RS19,RB11,RB19"),
+
+                new WeightedLife("HexParity", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI0,RS0,RS2,RS4,RS6,RB1,RB3,RB5"),
+
+                new WeightedLife("Hexrule b2o", "NW1,NN2,NE0,WW32,ME0,EE4,SW0,SS16,SE8,HI0,RS5,RS7,RS10,RS11,RS13,RS14,RS15,RS17,RS19,RS20,RS21,RS22,RS23,RS25,RS26,RS27,RS28,RS29,RS30,RS34,RS35,RS37,RS38,RS39,RS40,RS41,RS42,RS43,RS44,RS45,RS46,RS49,RS50,RS51,RS52,RS53,RS54,RS56,RS57,RS58,RS60,RB3,RB6,RB12,RB24,RB33,RB48"),
+
+                new WeightedLife("Hextenders", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI10,RS1,RS3,RS4,RS5,RB2,RB3"),
+
+                new WeightedLife("Hex Inverse Fire", "NW4,NN1,NE0,WW1,ME0,EE4,SW0,SS4,SE1,HI0,RS2,RS3,RS6,RS7,RS8,RS9,RS11,RS12,RS13,RS14,RS15,RB5,RB10,RB11,RB14,RB15"),
+
+                new WeightedLife("HGlass", "NW0,NN2,NE0,WW8,ME1,EE16,SW0,SS4,SE0,HI0,RS1,RS2,RS3,RS11,RS21,RS25,RS29,RS30,RS31,RB1,RB2,RB3,RB11,RB21,RB25,RB29,RB30,RB31"),
+
+                new WeightedLife("Hogs", "NW0,NN2,NE3,WW3,ME0,EE2,SW2,SS3,SE0,HI0,RS2,RS3,RS4,RS6,RB5,RB6"),
+
+                new WeightedLife("Jitters", "NW-1,NN-1,NE5,WW5,ME0,EE5,SW5,SS-1,SE-1,HI0,RS4,RS14,RB1,RB4,RB9"),
+
+                new WeightedLife("Lemmings", "NW1,NN2,NE1,WW2,ME0,EE2,SW1,SS3,SE1,HI0,RS3,RS4,RS5,RS6,RB4"),
+
+                new WeightedLife("Linguini", "NW9,NN1,NE9,WW1,ME0,EE1,SW9,SS1,SE9,HI0,RS2,RS3,RS4,RS9,RS10,RS11,RS19,RS20,RB11,RB18"),
+
+                new WeightedLife("Madness", "NW2,NN3,NE2,WW3,ME0,EE3,SW2,SS3,SE2,HI0,RS8,RS10,RS12,RS14,RB5,RB8,RB13"),
+
+                new WeightedLife("MazeMakers", "NW4,NN4,NE1,WW4,ME0,EE4,SW1,SS4,SE1,HI0,RS2,RS3,RS6,RS7,RS8,RS9,RS10,RS12,RS13,RB5"),
+
+                new WeightedLife("MidgeDN", "NW2,NN2,NE2,WW1,ME0,EE1,SW2,SS1,SE2,HI9,RS0,RS2,RS3,RB4,RB5,RB6"),
+
+                new WeightedLife("Midges", "NW1,NN2,NE1,WW2,ME3,EE2,SW1,SS2,SE1,HI4,RS3,RS5,RS6,RB4,RB5,RB6"),
+
+                new WeightedLife("MikesAnts", "NW0,NN1,NE1,WW1,ME0,EE0,SW1,SS1,SE1,HI0,RS4,RS5,RB2,RB5,RB6"),
+
+                new WeightedLife("Mosquito", "NW-1,NN-1,NE5,WW5,ME0,EE5,SW5,SS-1,SE-1,HI0,RS3,RS4,RS8,RS9,RB2,RB3,RB9"),
+
+                new WeightedLife("Mosquito2", "NW-1,NN-1,NE5,WW5,ME0,EE5,SW5,SS-1,SE-1,HI0,RS3,RS4,RS8,RS9,RB3,RB6,RB9,RB18"),
+
+                new WeightedLife("Navaho1", "NW4,NN1,NE4,WW5,ME7,EE5,SW4,SS1,SE4,HI12,RS8,RS9,RS11,RB2,RB5"),
+
+                new WeightedLife("Nocturne", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI4,RS1,RS6,RB2,RB3,RB4"),
+
+                new WeightedLife("Parity", "NW0,NN1,NE0,WW1,ME1,EE1,SW0,SS1,SE0,HI0,RS1,RS3,RS5,RB1,RB3,RB5"),
+
+                new WeightedLife("Pictures", "NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI0,RS1,RS2,RS3,RB2,RB3,RB4"),
+
+                new WeightedLife("PicturesH", "NW0,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE0,HI9,RS1,RS2,RS3,RB2,RB3,RB4"),
+
+                new WeightedLife("Pinwheels", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI7,RS2,RB2,RB3"),
+
+                new WeightedLife("PipeFleas", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI3,RS3,RS4,RS7,RS11,RS12,RS13,RS14,RS15,RS17,RS18,RS20,RS22,RS23,RS25,RB6,RB10"),
+
+                new WeightedLife("PreHogs", "NW2,NN3,NE0,WW3,ME0,EE2,SW0,SS2,SE3,HI0,RS3,RS4,RS6,RB5,RB6"),
+
+                new WeightedLife("PuttPutt", "NW9,NN1,NE9,WW1,ME0,EE1,SW9,SS1,SE9,HI0,RS1,RS2,RS3,RS4,RS9,RS18,RS27,RS36,RS40,RB2,RB4,RB11,RB18,RB19,RB36,RB40"),
+
+                new WeightedLife("SEmigration", "NW5,NN1,NE5,WW1,ME0,EE0,SW5,SS0,SE5,HI0,RS2,RS3,RS6,RS7,RS10,RS11,RS12,RB7,RB11,RB12,RB16"),
+
+                new WeightedLife("Simple", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS1,RS5,RB2,RB10"),
+
+                new WeightedLife("Simple hex crystal", "NW1,NN1,NE0,WW1,ME0,EE0,SW0,SS0,SE0,HI0,RS1,RS2,RS3,RB2,RB4"),
+
+                new WeightedLife("Simple Inverse", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS1,RS4,RS5,RS8,RS9,RS12,RS13,RS16,RS17,RS18,RS19,RS20,RS21,RS23,RS24,RB2,RB9,RB10,RB13,RB14,RB17,RB18,RB21,RB22,RB24"),
+
+                new WeightedLife("Simple Inverse Fire", "NW5,NN1,NE5,WW1,ME0,EE1,SW5,SS1,SE5,HI0,RS1,RS5,RS9,RS13,RS17,RS18,RS19,RS21,RS23,RS24,RB2,RB4,RB8,RB9,RB10,RB12,RB13,RB14,RB16,RB17,RB18,RB20,RB21,RB22,RB24"),
+
+                new WeightedLife("Stampede", "NW1,NN3,NE0,WW3,ME0,EE3,SW1,SS3,SE0,HI8,RS4,RS6,RS9,RS10,RB4,RB7"),
+
+                new WeightedLife("Starburst", "NW1,NN2,NE1,WW2,ME0,EE2,SW1,SS2,SE1,HI0,RS2,RS4,RS6,RB4"),
+
+                new WeightedLife("Starbursts2", "NW1,NN2,NE1,WW2,ME0,EE2,SW1,SS2,SE1,HI0,RS2,RS4,RS5,RS6,RB4"),
+
+                new WeightedLife("Stream", "NW0,NN1,NE0,WW1,ME0,EE4,SW0,SS4,SE1,HI0,RS1,RS3,RS4,RS7,RS8,RS9,RS10,RS11,RB5,RB7,RB8,RB10,RB11"),
+
+                new WeightedLife("UpDown1", "NW1,NN1,NE1,WW4,ME0,EE4,SW4,SS4,SE4,HI0,RS2,RS4,RS5,RS6,RS9,RS12,RS16,RS20,RB3,RB6,RB9,RB12"),
+
+                new WeightedLife("UpDown2", "NW1,NN5,NE1,WW1,ME0,EE1,SW5,SS5,SE5,HI0,RS2,RS3,RS7,RS10,RS11,RS12,RS15,RB3,RB7,RB11,RB15"),
+
+                new WeightedLife("Upstream", "NW1,NN3,NE0,WW4,ME0,EE4,SW1,SS3,SE0,HI10,RS4,RS6,RS9,RS10,RB4,RB7"),
+
+                new WeightedLife("Vineyard", "NW1,NN4,NE1,WW4,ME0,EE4,SW0,SS4,SE0,HI0,RS2,RS6,RS8,RS9,RS10,RS12,RS13,RB5"),
+
+                new WeightedLife("Vineyard2", "NW1,NN4,NE1,WW4,ME0,EE4,SW0,SS4,SE0,HI0,RS2,RS8,RS9,RS10,RS12,RS13,RB5"),
+
+                new WeightedLife("Weevils", "NW3,NN3,NE1,WW1,ME0,EE1,SW1,SS3,SE3,HI0,RS1,RS2,RS3,RS4,RB5,RB6,RB14"),
+
+                new WeightedLife("Weighted Brain", "NW2,NN3,NE2,WW3,ME-5,EE3,SW2,SS3,SE2,HI3,RS3,RS4,RS7,RB4,RB5,RB8"),
+
+                new WeightedLife("Y_Chromosome", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI3,RS2,RB2"),
+
+                new WeightedLife("ZipperMakers", "NW1,NN0,NE1,WW0,ME0,EE4,SW1,SS4,SE1,HI0,RS2,RS3,RS6,RS7,RS8,RS9,RS10,RS12,RS13,RB5"),
             }
         }
     };

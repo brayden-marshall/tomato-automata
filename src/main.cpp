@@ -68,6 +68,9 @@ int main() {
                         case SDLK_ESCAPE:
                             running = false;
                             break;
+                        case SDLK_h:
+                            app->show_gui = !app->show_gui;
+                            break;
                     }
                 } break;
             }

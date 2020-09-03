@@ -59,7 +59,7 @@ std::vector<std::vector<int8_t>> get_neighbourhood_offsets(
 );
 int get_weighted_neighbour_count(
     const Board& board, int row, int col,
-    std::map<std::string, std::vector<int>> weights
+    std::map<std::string, int> weights
 );
 int get_neighbour_count(
     const Board& board, NeighbourhoodType neighbourhood_type,

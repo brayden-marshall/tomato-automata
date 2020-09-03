@@ -3,6 +3,8 @@ tomato-automata
 imgui.ini
 libimgui.a
 
+.clangd
+
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles

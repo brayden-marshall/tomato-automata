@@ -102,6 +102,15 @@ public:
 };
 
 class WeightedLife: public CellularAutomata {
+protected:
+    std::map<std::string, int> neighbour_weights;
+    std::vector<uint8_t> birth_numbers;
+    std::vector<uint8_t> survive_numbers;
+
+public:
+    virtual std::pair<Board, bool> rewrite(const Board& board) override;
+
+    WeightedLife(std::string name, std::string rules);
 };
 
 #endif
