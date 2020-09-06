@@ -18,9 +18,17 @@ App::App(SDL_Renderer* r): renderer(r) {
     color_schemes = load_colorschemes();
     init_neighbourhood_offsets();
 
+    // set starting ruleset to Conway's Life
     current_cellular_automata_family = "Life";
-    current_cellular_automata =
-        cellular_automata[current_cellular_automata_family][0];
+    //current_cellular_automata =
+    //    cellular_automata[current_cellular_automata_family][0];
+    for (CellularAutomata* automata :
+         cellular_automata[current_cellular_automata_family]
+    ) {
+        if (automata->name == "Conway's Life") {
+            current_cellular_automata = automata;
+        }
+    }
 
     update_colors();
     randomize_board();

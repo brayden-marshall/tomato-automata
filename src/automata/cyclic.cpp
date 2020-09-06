@@ -6,19 +6,6 @@ using std::endl;
 #include "automata.h"
 #include "../common.h"
 
-// Rules are in form Rx/Tx/Cx/N/GH where:
-// R = Neighbourhood range from [1..10].
-// T = Threshold (minimal count of cells having next color that are necessary
-//     for the current cell to advance to the next state.
-// C = The number of states in the rule [0..C-1].
-// N = NeighbourhoodType (NM = extended Moore, NN = extended Von Neumann).
-// GH (optional) = Whether or not the rule is a Greenberg-Hastings model.
-//     In a Greenberg-Hastings model all states but 0 advance to the next state
-//     automatically, except for cells with state 0 which advance only if there are
-//     at least 'threshold' 1s in their neighbourhood.
-//
-// example:
-//     R1/T3/C3/NM
 Cyclic::Cyclic(std::string name, std::string rules)
     : CellularAutomata { name, rules }
 {
