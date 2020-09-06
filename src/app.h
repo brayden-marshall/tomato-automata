@@ -36,7 +36,6 @@ class App {
         // members
         Board board{};
         std::default_random_engine random_generator;
-        int delay = 100;
         int timer = 0;
         bool grid_enabled = true;
 

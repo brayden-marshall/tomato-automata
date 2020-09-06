@@ -58,8 +58,8 @@ std::pair<Board, bool> LargerThanLife::rewrite(const Board& board) {
     bool change_made = false;
     auto board_copy = board;
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             uint8_t neighbour_count = get_extended_neighbour_count(
                 board, neighbourhood_type, row, col, {1}, range
             );

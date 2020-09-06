@@ -16,7 +16,7 @@ int neighbour_config_to_index(
 ) {
     int index = 0;
 
-    for (int i = 0; i < neighbour_config.size(); i++) {
+    for (size_t i = 0; i < neighbour_config.size(); i++) {
         // get values in reverse because 'neighbourConfiguration' is being intepreted
         // as digits of a number (base this.numStates) parsed from right to left
         auto neighbour_val = neighbour_config[(neighbour_config.size()-1)-i];
@@ -38,8 +38,8 @@ NeumannBinary::NeumannBinary(std::string name, std::string rules)
 
     num_states = _num_states;
 
-    int n = rules.size();
-    for (int i = 1; i < n; i++) {
+    size_t n = rules.size();
+    for (size_t i = 1; i < n; i++) {
         int _state = rules[i] - '0';
         if (_state < 0 || _state > 9) {
             throw new std::runtime_error(
@@ -54,8 +54,8 @@ std::pair<Board, bool> NeumannBinary::rewrite(const Board& board) {
     bool change_made = false;
     auto board_copy = board;
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             // get values of all neighbours
             std::vector<uint8_t> neighbour_config =
                 get_neighbour_configuration(board, row, col);

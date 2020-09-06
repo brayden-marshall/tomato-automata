@@ -56,8 +56,8 @@ void App::render(const ImGuiIO& io) {
     auto cell_height = display_height / BOARD_ROWS;
 
     // fill in squares
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             uint8_t val = board[row][col];
             SDL_SetRenderDrawColor(
                 renderer,
@@ -79,7 +79,7 @@ void App::render(const ImGuiIO& io) {
     if (grid_enabled) {
         SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
         // draw vertical grid lines
-        for (int col = 1; col < BOARD_COLS; col++) {
+        for (size_t col = 1; col < BOARD_COLS; col++) {
             SDL_RenderDrawLine(renderer,
                 col * cell_width, 0,
                 col * cell_width, display_width
@@ -87,7 +87,7 @@ void App::render(const ImGuiIO& io) {
         }
 
         // draw horizontal grid lines
-        for (int row = 1; row < BOARD_ROWS; row++) {
+        for (size_t row = 1; row < BOARD_ROWS; row++) {
             SDL_RenderDrawLine(renderer,
                 0, row * cell_height,
                 display_height, row * cell_height
@@ -111,9 +111,9 @@ void App::render_gui() {
 
     // paintbrush window
     {
-        int old_selected_state = selected_state;
+        uint8_t old_selected_state = selected_state;
         ImGui::Begin("Paintbrush");
-        for (int i = 0; i < current_cellular_automata->num_states; i++) {
+        for (uint8_t i = 0; i < current_cellular_automata->num_states; i++) {
             ImGui::PushID(i);
 
             if (ImGui::ColorButton("", ImVec4(
@@ -292,15 +292,15 @@ void App::advance_one_generation() {
 void App::randomize_board() {
     std::uniform_int_distribution<uint8_t> distribution(
         0, current_cellular_automata->num_states-1);
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             board[row][col] = distribution(random_generator);
         }
     }
 }
 
 void App::clear_board() {
-    for (int row = 0; row < BOARD_ROWS; row++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
         board[row].fill(0);
     }
 }
@@ -318,7 +318,7 @@ void App::update_colors() {
 
 // functions
 ColorPalette get_color_subset(
-    const ColorPalette& colors, int states
+    const ColorPalette& colors, size_t states
 ) {
     auto _colors = colors;
     while (_colors.size() < states) {
@@ -329,7 +329,7 @@ ColorPalette get_color_subset(
     color_subset.push_back(_colors[0]);
 
     int next_color_index = 1;
-    for (int i = 1; i < states; i++) {
+    for (size_t i = 1; i < states; i++) {
         color_subset.push_back(_colors[next_color_index]);
         next_color_index += floor((_colors.size()-1)/states);
     }

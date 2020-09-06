@@ -40,8 +40,8 @@ std::pair<Board, bool> WeightedLife::rewrite(const Board& board) {
     bool change_made = false;
     Board board_copy = board;
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             int neighbour_count = get_weighted_neighbour_count(
                 board, row, col, neighbour_weights
             );

@@ -45,18 +45,18 @@ RulesTable::RulesTable(std::string name, std::string rules)
     }
 
     // start index of the rules table in the string being parsed
-    int start_index = 3;
+    size_t start_index = 3;
 
     // parse the remainder of the string into this->table
     while (start_index < rules_arr.size()) {
-        int end_index = start_index + RULE_TABLE_ROW_LENGTH;
+        size_t end_index = start_index + RULE_TABLE_ROW_LENGTH;
         if (rules_arr.size()-start_index <= RULE_TABLE_ROW_LENGTH) {
             end_index = rules_arr.size();
         }
 
         // convert the current row to integers
         std::vector<int> row;
-        for (int i = start_index; i < end_index; i++) {
+        for (size_t i = start_index; i < end_index; i++) {
             int temp = rules_arr[i][0] - '0';
             if (temp < 0 || temp > 9) {
                 throw new std::runtime_error(
@@ -88,8 +88,8 @@ std::pair<Board, bool> RulesTable::rewrite(const Board& board) {
     bool change_made = false;
     Board board_copy = board;
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
+    for (size_t row = 0; row < BOARD_ROWS; row++) {
+        for (size_t col = 0; col < BOARD_COLS; col++) {
             int neighbour_count = first_bitplane_is_firing ?
                 get_neighbour_count(board, neighbourhood_type, row, col, 1) :
                 get_neighbour_count(board, neighbourhood_type, row, col);
