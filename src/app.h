@@ -26,7 +26,7 @@ enum class ColorScheme {
 
 CellularAutomataMap load_cellular_automata();
 std::vector<std::array<uint8_t, 3>> get_color_subset(
-        const std::vector<std::array<uint8_t, 3>>& colors, int states
+        const std::vector<std::array<uint8_t, 3>>& colors, size_t states
 );
 std::array<std::vector<std::array<uint8_t, 3>>, COLORSCHEMES_MAX>
 load_colorschemes();
