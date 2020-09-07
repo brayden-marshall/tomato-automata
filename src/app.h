@@ -10,12 +10,13 @@
 #include "../imgui/imgui.h"
 #include "./common.h"
 
-#define ANIMATION_SPEEDS_MAX 4
+#define ANIMATION_SPEEDS_MAX 5
 enum class AnimationSpeed {
     Slow,
     Medium,
     Fast,
     VeryFast,
+    Lightning,
 };
 
 #define COLORSCHEMES_MAX 2
@@ -43,9 +44,9 @@ class App {
         int brush_size = 1;
 
         std::array<const char*, ANIMATION_SPEEDS_MAX> animation_speed_names
-            {"Slow", "Medium", "Fast", "Very Fast"};
+            {"Slow", "Medium", "Fast", "Very Fast", "Lightning"};
         std::array<int, ANIMATION_SPEEDS_MAX> animation_speed_delays
-            {250, 150, 100, 50};
+            {250, 150, 100, 50, 0};
 
         // color scheme
         std::array<const char*, COLORSCHEMES_MAX> color_scheme_names

@@ -109,10 +109,12 @@ void App::render(const ImGuiIO& io) {
 void App::render_gui() {
     ImGui::NewFrame();
 
-    // paintbrush window
+    // tools window
     {
         uint8_t old_selected_state = selected_state;
-        ImGui::Begin("Paintbrush");
+        ImGui::SetNextWindowSizeConstraints({0, 0}, {10000, 200});
+        ImGui::Begin("Tools");
+        ImGui::Text("Select Color");
         for (uint8_t i = 0; i < current_cellular_automata->num_states; i++) {
             ImGui::PushID(i);
 
@@ -264,8 +266,9 @@ void App::update(const ImGuiIO& io, int dt) {
         }
     }
 
-    // if mouse was pressed
-    if (io.MouseDown[0] || io.MouseDown[1]) {
+    // if mouse was pressed and no window is focused
+    if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow) &&
+        (io.MouseDown[0] || io.MouseDown[1])) {
         // get the row/col from mouse position
         double cell_width = io.DisplaySize.x / BOARD_COLS;
         double cell_height = io.DisplaySize.y / BOARD_ROWS;
@@ -273,8 +276,9 @@ void App::update(const ImGuiIO& io, int dt) {
         int clicked_col = io.MousePos.x / cell_width;
         int clicked_row = io.MousePos.y / cell_height;
 
-        board[clicked_row][clicked_col] =
-            io.MouseDown[0] ? selected_state : 0;
+        current_cellular_automata->handle_mouse_click(
+            board, selected_state, clicked_row, clicked_col, io.MouseDown[1]
+        );
     }
 }
 
@@ -723,6 +727,11 @@ CellularAutomataMap load_cellular_automata() {
                 new WeightedLife("Y_Chromosome", "NW1,NN1,NE0,WW1,ME0,EE1,SW0,SS1,SE1,HI3,RS2,RB2"),
 
                 new WeightedLife("ZipperMakers", "NW1,NN0,NE1,WW0,ME0,EE4,SW1,SS4,SE1,HI0,RS2,RS3,RS6,RS7,RS8,RS9,RS10,RS12,RS13,RB5"),
+            }
+        },
+        {
+            "Ants", {
+                new LangtonsAnt(),
             }
         }
     };

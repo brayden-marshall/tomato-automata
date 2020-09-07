@@ -7,3 +7,4 @@ A cellular automata simulation using SDL2 and Dear Imgui.
 ## Todo
 
 - Implement zooming/panning on grid
+- Implement brush sizing (allow to paint/erase in larger circles at once)

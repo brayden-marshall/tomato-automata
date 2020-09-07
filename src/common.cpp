@@ -3,16 +3,19 @@
 #include <iostream>
 
 #include "./common.h"
+#include "imgui.h"
 #include "./automata/automata.h"
 
 // set the range limit for generating offsets
 // currently, no rulesets require greater than 10 range
 #define MAX_NEIGHBOURHOOD_RANGE 10
 
+// globals
 std::vector<std::vector<std::vector<int8_t>>> moore_offsets;
 std::vector<std::vector<std::vector<int8_t>>> von_neumann_offsets;
 std::map<std::string, std::vector<int>> direction_to_offset;
 
+// helper functions
 void init_neighbourhood_offsets() {
     moore_offsets =
         generate_all_neighbourhood_offsets(NeighbourhoodType::Moore);
@@ -44,12 +47,26 @@ std::vector<std::string> split(const std::string& s, char delimiter)
    return tokens;
 }
 
+//
+// CellularAutomata implementation
+//
+
 CellularAutomata::CellularAutomata() {
 }
 
 CellularAutomata::CellularAutomata(std::string name, std::string rules)
     : name(name), rules(rules) {
 }
+
+void CellularAutomata::handle_mouse_click(
+    Board& board, int selected_state, int row, int col, bool is_right_click
+) {
+    board[row][col] = is_right_click ? 0 : selected_state;
+}
+
+//
+// neighbourhood functions
+//
 
 std::vector<std::vector<int8_t>> generate_neighbourhood_offsets(
     NeighbourhoodType neighbourhood_type, int range

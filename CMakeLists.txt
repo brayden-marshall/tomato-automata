@@ -10,7 +10,8 @@ set(SRC_LIST
     ${SRC}/automata/automata.h ${SRC}/automata/life.cpp
     ${SRC}/automata/generations.cpp ${SRC}/automata/cyclic.cpp
     ${SRC}/automata/larger_than_life.cpp ${SRC}/automata/neumann_binary.cpp
-    ${SRC}/automata/rules_table.cpp ${SRC}/automata/weighted_life.cpp
+    ${SRC}/automata/weighted_life.cpp ${SRC}/automata/rules_table.cpp
+    ${SRC}/automata/langtons_ant.cpp
 )
 #aux_source_directory(./src SRC_LIST)
 

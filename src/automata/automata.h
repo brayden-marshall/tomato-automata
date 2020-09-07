@@ -182,4 +182,21 @@ public:
     WeightedLife(std::string name, std::string rules);
 };
 
+class LangtonsAnt: public CellularAutomata {
+protected:
+    std::pair<int, int> ant_pos { BOARD_ROWS / 2, BOARD_COLS / 2 };
+    Direction ant_direction { Direction::Up };
+    // track the state of the square the ant is on here, since we need to
+    // set it to a different state on the board in order to display the ant
+    uint8_t ant_square_state = 0;
+
+public:
+    virtual std::pair<Board, bool> rewrite(const Board& board) override;
+    virtual void handle_mouse_click(
+        Board& board, int selected_state, int row, int col, bool is_right_click
+    ) override;
+
+    LangtonsAnt();
+};
+
 #endif

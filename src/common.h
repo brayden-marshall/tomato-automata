@@ -88,21 +88,36 @@ enum class NeighbourhoodType {
     Moore,
 };
 
+
+// DO NOT CHANGE ORDER
+// Order should be: Up, Right, Down, Left
+#define DIRECTIONS_MAX 4
+enum class Direction {
+    Up,
+    Right,
+    Down,
+    Left,
+};
+
 // classes
 class CellularAutomata {
-    protected:
-        CellularAutomata();
-        CellularAutomata(std::string name, std::string rules);
-    public:
-        // members
-        std::string name;
-        uint8_t num_states;
-        std::string rules;
-        std::optional<ColorPalette> color_override;
+protected:
+    CellularAutomata();
+    CellularAutomata(std::string name, std::string rules);
+public:
+    // members
+    std::string name;
+    uint8_t num_states;
+    std::string rules;
+    std::optional<ColorPalette> color_override;
 
-        // methods
-        virtual ~CellularAutomata() {}
-        virtual std::pair<Board, bool> rewrite(const Board& board) = 0;
+    // methods
+    virtual ~CellularAutomata() {}
+    virtual std::pair<Board, bool> rewrite(const Board& board) = 0;
+
+    virtual void handle_mouse_click(
+        Board& board, int selected_state, int row, int col, bool is_right_click
+    );
 };
 
 #endif
