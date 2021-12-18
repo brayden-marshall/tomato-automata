@@ -1,6 +1,4 @@
 #include <iostream>
-using std::cout;
-using std::endl;
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -142,6 +140,10 @@ void App::render_gui() {
     // controls window
     ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
+    if (ImGui::Button("Help")) {
+        show_help_menu = !show_help_menu;
+    }
+
     if (ImGui::Button("Clear")) {
         clear_board();
     }
@@ -252,6 +254,19 @@ void App::render_gui() {
     // end controls window
     ImGui::End();
 
+    // help window
+    if (show_help_menu) {
+        ImGui::Begin("Help", &show_help_menu);
+
+        ImGui::Text("Controls:");
+        ImGui::Text("SPACEBAR: start/stop animation");
+        ImGui::Text("h:        toggle GUI");
+        ImGui::Text("ESCAPE:   close application");
+
+        // end help window
+        ImGui::End();
+    }
+
     ImGui::Render();
     ImGuiSDL::Render(ImGui::GetDrawData());
 }
@@ -294,11 +309,14 @@ void App::advance_one_generation() {
 
 // private methods
 void App::randomize_board() {
-    std::uniform_int_distribution<uint8_t> distribution(
-        0, current_cellular_automata->num_states-1);
-    for (size_t row = 0; row < BOARD_ROWS; row++) {
-        for (size_t col = 0; col < BOARD_COLS; col++) {
-            board[row][col] = distribution(random_generator);
+    // don't randomize board for langton's ant
+    if (dynamic_cast<LangtonsAnt*>(current_cellular_automata) == nullptr) {
+        std::uniform_int_distribution<uint8_t> distribution(
+            0, current_cellular_automata->num_states-1);
+        for (size_t row = 0; row < BOARD_ROWS; row++) {
+            for (size_t col = 0; col < BOARD_COLS; col++) {
+                board[row][col] = distribution(random_generator);
+            }
         }
     }
 }

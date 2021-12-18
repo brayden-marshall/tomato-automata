@@ -72,6 +72,7 @@ class App {
         AnimationSpeed animation_speed = AnimationSpeed::Fast;
         bool paused = true;
         bool show_gui = true;
+        bool show_help_menu = false;
 
         // constructor
         App(SDL_Renderer* r);
